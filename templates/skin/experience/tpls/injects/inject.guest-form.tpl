@@ -1,18 +1,18 @@
 <div {if $right_comment}style="display: none;" id="guest-comment-mail-panel"{/if}>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-24">
         <div class="bg bg-warning wsw mb15">
             {$aLang.plugin.gc.guest_mail_comment}
         </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-16">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-24">
                 <div class="form-group">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                        <span class="input-group-addon"><i class="fa fa-envelope-o"></i></span>
                         <input type="text"
                                id="guest_mail"
                                placeholder="{$aLang.plugin.gc.guest_mail}"
@@ -22,10 +22,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12">
+            <div class="col-md-24">
                 <div class="form-group">
                     <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
                         <input type="text"
                                id="guest_login"
                                placeholder="{$aLang.plugin.gc.guest_login}"
@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-8">
         <script>
             $(function () {
                 $('.comment-image').attr('src', "{router page='commentcaptcha'}?n=" + Math.random());

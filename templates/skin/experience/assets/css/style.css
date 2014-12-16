@@ -21,5 +21,3 @@
 .settings-social { padding: 0; list-style: none; margin: 0 0 0 4px; display: inline-block; }
 .settings-social li { display: inline-block; }
 .settings-social li a:hover, .settings-social li:hover { background-color: transparent !important; }
-
-.captcha-input { max-width: 100% !important; }
