@@ -46,7 +46,21 @@
                                     {$oUser->getDisplayName()}
                                 </a>
                             {else}
-                                <span>{$oComment->getGuestLogin()}</span>
+                                {$iSocialLink=$oComment->getSocialLink()}
+                                {if $oComment->getImage()}
+                                    <a href="{if $iSocialLink}{$iSocialLink}{else}#{/if}" rel="nofollow" class="mal0 js-popup-user">
+                                        <img src="{$oComment->getImage()}" width="24px;" alt="{if $iSocialLink}{$iSocialLink}{else}{$oComment->getGuestLogin()}{/if}"/>
+                                    </a>
+                                {else}
+                                    <a href="{if $iSocialLink}{$iSocialLink}{else}#{/if}" rel="nofollow" class="mal0 js-popup-user">
+                                        <img class="logo-image" class="mal0" width="24px" src="{$oUser->getAvatarUrl(24)}"/>
+                                    </a>
+                                {/if}
+                                {if $iSocialLink}
+                                    <a href="{$iSocialLink}" class="userlogo link link-blue link-lead link-clear" rel="nofollow">{$oComment->getGuestLogin()}</a>
+                                {else}
+                                    <span>{$oComment->getGuestLogin()}</span>
+                                {/if}
                             {/if}
                         </li>
                         <li class="comment-date-block">

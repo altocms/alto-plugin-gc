@@ -144,6 +144,25 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
         $sUserName = trim($oUserData->getDataName() . ' ' .$oUserData->getDataSurname());
         $oToken->setTokenUserLogin($sUserName?$sUserName:$this->Lang_Get('plugin.gc.guest'));
 
+        $sUserLogoUrl = $this->Uploader_UploadRemote($oUserData->getDataPhoto());
+        $sUserLogoUrlNew = FALSE;
+        if ($sUserLogoUrl) {
+            $sFileTmp = $this->Img_TransformFile($sUserLogoUrl, 'topic', array());
+            if ($sFileTmp) {
+                $sDirUpload = $this->Uploader_GetUserImageDir(0);
+                $sFileImage = $this->Uploader_Uniqname($sDirUpload, F::File_GetExtension($sFileTmp, true));
+                if ($xStoredFile = $this->Uploader_Store($sFileTmp, $sFileImage)) {
+                    if (is_object($xStoredFile)) {
+                        $sUserLogoUrlNew = $xStoredFile->GetUrl();
+                    } else {
+                        $sUserLogoUrlNew = $this->Uploader_Dir2Url($xStoredFile);
+                    }
+                }
+            }
+        }
+
+
+        $oToken->setTokenImage($sUserLogoUrlNew);
         $oToken->Add();
     }
 
@@ -169,4 +188,15 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
         return FALSE;
     }
 
+
+    public function UploadUserImageByUrl($sUrl, $oUser) {
+
+        if ($sFileTmp = $this->Uploader_UploadRemote($sUrl)) {
+            if ($sFileUrl = $this->User_UploadAvatar($sFileTmp, $oUser, array())) {
+                return $sFileUrl;
+            }
+        }
+
+        return FALSE;
+    }
 }

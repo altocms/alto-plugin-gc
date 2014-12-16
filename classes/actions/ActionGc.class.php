@@ -137,7 +137,7 @@ class PluginGc_ActionGc extends Action {
 
         $this->Session_Set('comment_token_id', $oToken->getTokenId());
         $this->Session_SetCookie('comment_token_hash', md5(Config::Get('plugin.gc.salt') . $oToken->getTokenData()), 'P7D', false);
-        $this->Message_AddNoticeSingle($this->Lang_Get('plugin.gc.ok'), $this->Lang_Get('attention'), TRUE);
+//        $this->Message_AddNoticeSingle($this->Lang_Get('plugin.gc.ok'), $this->Lang_Get('attention'), TRUE);
     }
 
 

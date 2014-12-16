@@ -285,6 +285,10 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
             $oCommentNew->setGuestLogin($oToken->getTokenUserLogin());
             $oCommentNew->setGuestMail($oToken->getTokenUserEmail());
             $oCommentNew->setTokenId($oToken->getTokenId());
+            $oCommentNew->setSocial($oToken->getTokenProviderName());
+            $oCommentNew->setSocialId($oToken->getTokenProviderUserId());
+            $oCommentNew->setImage($oToken->getTokenImage());
+
         }
 
         // * Добавляем коммент

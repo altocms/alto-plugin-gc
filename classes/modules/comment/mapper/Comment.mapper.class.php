@@ -27,17 +27,20 @@ class PluginGc_ModuleComment_MapperComment extends PluginGc_Inherit_ModuleCommen
               comment_text_hash,
               comment_guest_login,
               comment_guest_mail,
-              comment_token_id
+              comment_token_id,
+              comment_social,
+              comment_social_id,
+              comment_image
           )
           VALUES (
-              ?, ?d, ?, ?d, ?d, ?, ?, ?, ?d, ?, ?, ?, ?d
+              ?, ?d, ?, ?d, ?d, ?, ?, ?, ?d, ?, ?, ?, ?d, ?, ?, ?
           )
         ";
         $iId = $this->oDb->query(
             $sql, $oComment->getPid(), $oComment->getTargetId(), $oComment->getTargetType(),
             $oComment->getTargetParentId(), $oComment->getUserId(), $oComment->getText(), $oComment->getDate(),
             $oComment->getUserIp(), $oComment->getPublish(), $oComment->getTextHash(), $oComment->getGuestLogin(),
-            $oComment->getGuestMail(), $oComment->getTokenId()
+            $oComment->getGuestMail(), $oComment->getTokenId(), $oComment->getSocial(), $oComment->getSocialId(), $oComment->getImage()
         );
         return $iId ? $iId : false;
     }

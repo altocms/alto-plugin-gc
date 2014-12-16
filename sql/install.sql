@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `prefix_comment_token` (
   `token_provider_user_id` VARCHAR(50)  NOT NULL,
   `token_user_email`       VARCHAR(100) NULL DEFAULT '',
   `token_user_login`       VARCHAR(100) NULL DEFAULT '',
+  `token_image`            VARCHAR(254) NULL DEFAULT NULL,
   `token_expire`           INT(10) UNSIGNED
 )
   ENGINE =MyISAM

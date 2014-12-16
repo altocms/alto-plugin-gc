@@ -68,4 +68,53 @@ class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherit_ModuleCommen
         }
     }
 
+    /**
+     * Возвращает идентификатор записи
+     * @return int|null
+     */
+    public function getSocialLink() {
+        if (($sSocialType = $this->getCommentSocial()) && $this->getSocialId()) {
+            switch ($sSocialType) {
+                case 'vk':
+                    $sLink = 'http://vk.com/id{*}';
+                    break;
+                case 'od':
+                    $sLink = 'http://www.odnoklassniki.ru/profile/{*}/';
+                    break;
+                case 'mm':
+                    $sLink = 'http://my.mail.ru/mail/{*}/';
+                    break;
+                case 'i':
+                    $sLink = 'http://instagram.com/{*}';
+                    break;
+                case 'github':
+                    $sLink = 'https://github.com/{*}';
+                    break;
+                case 'li':
+                    $sLink = 'https://www.linkedin.com/profile/view?id={*}';
+                    break;
+                case 'ya':
+                    $sLink = 'http://yandex.ru';
+                    break;
+                case 'g':
+                    $sLink = 'https://plus.google.com/{*}';
+                    break;
+                case 'fb':
+                    $sLink = 'http://facebook.com/{*}';
+                    break;
+
+                default:
+                    $sLink = FALSE;
+            }
+
+
+            if ($sLink) {
+                $sLink = str_replace('{*}', $this->getSocialId(), $sLink);
+            }
+
+            return $sLink;
+        }
+
+        return FALSE;
+    }
 }

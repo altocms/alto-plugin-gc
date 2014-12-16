@@ -66,6 +66,8 @@ class PluginGc extends Plugin {
         'modules' => array(
             'ModuleVote',
             'ModuleNotify',
+            'ModuleUser',
+            'ModuleUploader',
         ),
         'entity'  => array(
             'ModuleComment_EntityComment',
@@ -81,8 +83,12 @@ class PluginGc extends Plugin {
      * @return bool
      */
     public function Activate() {
-        if (!$this->isFieldExists('prefix_comment', 'guest_login')) {
+        if (!$this->isFieldExists('prefix_comment', 'comment_guest_login')) {
             $this->ExportSQL(dirname(__FILE__) . '/sql/install.sql');
+        }
+
+        if (!$this->isFieldExists('prefix_comment', 'comment_image')) {
+            $this->ExportSQL(dirname(__FILE__) . '/sql/update-to-1.1.sql');
         }
 
         return TRUE;

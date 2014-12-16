@@ -19,6 +19,12 @@
             <a href="{$oUser->getProfileUrl()}" class="comment-avatar js-popup-user-{$oUser->getId()}">
                 <img src="{$oUser->getAvatarUrl(64)}" alt="{$oUser->getDisplayName()}"/>
             </a>
+        {else}
+            {if $oComment->getImage()}
+                <img class="logo-image" width="64px" src="{$oComment->getImage()}"/>
+            {else}
+                <img class="logo-image" width="64px" src="{$oUser->getAvatarUrl(64)}"/>
+            {/if}
         {/if}
         <ul class="list-unstyled small comment-info">
             {if is_null($oComment->getGuestLogin())}
@@ -28,7 +34,12 @@
                        class="comment-topic-author"{/if}>{$oUser->getDisplayName()}</a>
                 </li>
             {else}
-                <span>{$oComment->getGuestLogin()}</span>
+                {$iSocialLink=$oComment->getSocialLink()}
+                {if $iSocialLink}
+                    <a href="{$iSocialLink}" rel="nofollow">{$oComment->getGuestLogin()}</a>
+                {else}
+                    <span>{$oComment->getGuestLogin()}</span>
+                {/if}
             {/if}
             <li class="comment-info-date">
                 <a href="{if Config::Get('module.comment.nested_per_page')}{router page='comments'}{else}#comment{/if}{$oComment->getId()}"
