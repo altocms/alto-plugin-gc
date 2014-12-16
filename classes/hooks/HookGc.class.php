@@ -81,7 +81,7 @@ class PluginGc_HookGc extends Hook {
      */
     public function TemplateAddSocialIcons() {
 
-        $this->Session_Set('return_path', Config::Get('path.root.web') . $_SERVER['REQUEST_URI']);
+        $this->Session_Set('return_path', Router::GetPathWebCurrent());
 
         return
             $this->Lang_Get('plugin.gc.auth_by_social' . ($this->PluginGc_CommentProvider_ValidateCommentRight() ? 'good' : '')) .
