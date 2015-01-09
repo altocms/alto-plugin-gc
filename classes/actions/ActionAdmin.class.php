@@ -114,39 +114,58 @@ class PluginGc_ActionAdmin extends PluginGc_Inherit_ActionAdmin {
         $this->Viewer_AddHtmlTitle($this->Lang_Get('plugin.gc.admin_social_page_title'));
         $this->SetTemplateAction('content/social_comment_list');
 
+        /** @var ModuleUser_EntityUser $oGuestUser */
+        $oGuestUser = $this->User_GetUserByLogin(Config::Get('plugin.gc.guest_login'));
+
         if (getRequest('submit_social')) {
 
-            // Проверяем режим работы плагина
-            if (!in_array(getRequest('guest_comment_mode'), array('social', 'mail', 'both'))) {
-                $this->Message_AddErrorSingle($this->Lang_Get('admin_error_wrong_mode'), $this->Lang_Get('error'));
-            }
+            // Проверяем email
+            if (($sEmail = getRequestStr('admin_social_email')) && F::CheckVal($sEmail, 'mail') && (!$this->User_GetUserByMail($sEmail) || $sEmail == $oGuestUser->getMail())) {
 
-            $aData = array();
-            foreach ($_POST as $k => $v) {
-                if (mb_strpos($k, 'guest_comment_') === 0) {
-
-                    // Провайдеры
-                    if (is_array($v) && str_replace('guest_comment_', '', $k) == 'providers') {
-                        foreach ($v as $sProviderName => $aProviderData) {
-                            foreach ($aProviderData as $pdKey => $pdVal) {
-                                $aData["plugin.gc.providers.{$sProviderName}.{$pdKey}"] = $pdVal;
-                            }
-                        }
-                        continue;
-                    }
-
-                    // Другое
-                    $aData['plugin.gc.' . str_replace('guest_comment_', '', $k)] = $v;
+                // Проверяем режим работы плагина
+                if (!in_array(getRequest('guest_comment_mode'), array('social', 'mail', 'both'))) {
+                    $this->Message_AddErrorSingle($this->Lang_Get('admin_error_wrong_mode'), $this->Lang_Get('error'));
                 }
-            }
-            Config::WriteCustomConfig($aData);
-            $this->_setGuestcommentRequestByArray($aData);
 
-            return FALSE;
+                $aData = array();
+                foreach ($_POST as $k => $v) {
+                    if (mb_strpos($k, 'guest_comment_') === 0) {
+
+                        // Провайдеры
+                        if (is_array($v) && str_replace('guest_comment_', '', $k) == 'providers') {
+                            foreach ($v as $sProviderName => $aProviderData) {
+                                foreach ($aProviderData as $pdKey => $pdVal) {
+                                    $aData["plugin.gc.providers.{$sProviderName}.{$pdKey}"] = $pdVal;
+                                }
+                            }
+                            continue;
+                        }
+
+                        // Другое
+                        $aData['plugin.gc.' . str_replace('guest_comment_', '', $k)] = $v;
+                    }
+                }
+
+                Config::WriteCustomConfig($aData);
+                $this->_setGuestcommentRequestByArray($aData);
+
+                $oGuestUser->setMail($sEmail);
+                $this->User_Update($oGuestUser);
+
+                return FALSE;
+
+            } else {
+                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.admin_error_wrong_email'), $this->Lang_Get('error'));
+            }
 
         }
 
         $this->_setGuestcommentRequestByArray(Config::Get('plugin.gc'));
+
+        if ($oGuestUser) {
+            $_REQUEST['admin_social_email'] = $oGuestUser->getMail();
+        }
+
 
         return FALSE;
     }

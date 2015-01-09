@@ -51,6 +51,20 @@
         </div>
     </div>
 
+    {* email *}
+    <div class="control-group" style="min-height: 112px;">
+        <label for="banner_name" class="control-label">
+            {$aLang.plugin.gc.admin_social_email}:
+        </label>
+
+        <div class="controls">
+            <div class="col-md-8">
+                <input type="text" name="admin_social_email" value="{$_aRequest.admin_social_email}"/>
+                <span class="help-block">{$aLang.plugin.gc.admin_social_email_notice}</span>
+            </div>
+        </div>
+    </div>
+
     {* ГИТХАБ *}
     <div class="control-group">
         <label for="banner_name" class="control-label">
