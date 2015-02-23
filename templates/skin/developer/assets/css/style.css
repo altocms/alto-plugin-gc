@@ -1,0 +1,38 @@
+/*!
+ * style.css
+ * Файл стилей плагина Gc
+ *
+ * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
+ * @copyrights  Copyright © 2014, Андрей Г. Воронов
+ *              Является частью плагина Ar
+ * @version     0.0.1 от 30.07.2014 21:11
+ */
+
+.wsw { white-space: normal !important; margin-bottom: 15px; }
+.wsw12 { white-space: normal !important; margin-bottom: 12px; }
+#input-comment-captcha { line-height: 60px; height: 60px; font-size: 46px; }
+.comment-image { cursor: pointer; }
+
+.auth-provider-logo { line-height: 24px !important; margin-right: 4px;}
+.auth-provider-logo:hover, .auth-provider-logo a:hover { background-color: transparent !important; border-color: transparent !important;}
+.auth-provider-logo a { padding: 0 !important; border-radius: 4px; position: relative; display: block; width: 24px; height: 24px;}
+.auth-provider-logo img { width: 24px; position: absolute; top: 8px}
+
+.settings-social { padding: 0; list-style: none; margin: 0 0 0 4px; display: inline-block; }
+.settings-social li { display: inline-block; }
+.settings-social li a:hover, .settings-social li:hover { background-color: transparent !important; }
+
+.captcha-input { max-width: 100% !important; }
+
+.gc-table {
+    width: 100%;
+}
+.gc-table td{
+    vertical-align: top;
+    padding: 4px;
+}
+.gc-table .gc-inputs input {
+    min-width: 345px;
+    width: 100%;
+    margin-bottom: 6px;
+}

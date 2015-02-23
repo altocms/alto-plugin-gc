@@ -37,6 +37,8 @@ class PluginGc extends Plugin {
             // Комментарий к топику
             'comments/comment.tree.tpl' => '_comments/comment.tree.tpl',
             'comments/comment.single.tpl' => '_comments/comment.single.tpl',
+            'comment_tree.tpl' => '_comments/comment.tree.tpl',
+            'comment.tpl' => '_comments/comment.single.tpl',
 
             // Активность
             'actions/stream/action.stream.events.tpl' => '_actions/stream/action.stream.events.tpl',
