@@ -146,10 +146,18 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
         if (!($oToken = $this->PluginGc_CommentProvider_ValidateCommentRight())) {
 
-            if (!isset($_SESSION['comment_captcha_keystring']) || mb_strtolower($_SESSION['comment_captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
-                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
+            if (version_compare(ALTO_VERSION, '1.1.0-alpha', '<=')) {
+                if (!isset($_SESSION['comment_captcha_keystring']) || mb_strtolower($_SESSION['comment_captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
+                    $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
 
-                return;
+                    return;
+                }
+            } else {
+                if (!isset($_SESSION['captcha_keystring']) || mb_strtolower($_SESSION['captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
+                    $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
+
+                    return;
+                }
             }
 
             if (!F::CheckVal($sGuestLogin = getRequest('guest_login', FALSE), 'text', 2, 100)) {

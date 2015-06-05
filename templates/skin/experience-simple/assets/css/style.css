@@ -1,0 +1,25 @@
+/*!
+ * style.css
+ * Файл стилей плагина Gc
+ *
+ * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
+ * @copyrights  Copyright © 2014, Андрей Г. Воронов
+ *              Является частью плагина Ar
+ * @version     0.0.1 от 30.07.2014 21:11
+ */
+
+.wsw { white-space: normal !important; margin-bottom: 15px; }
+.wsw12 { white-space: normal !important; margin-bottom: 12px; }
+#input-comment-captcha { line-height: 80px; height: 80px; font-size: 46px !important; }
+.comment-image { cursor: pointer; }
+
+.auth-provider-logo { line-height: 24px !important; margin-right: 4px;}
+.auth-provider-logo:hover, .auth-provider-logo a:hover { background-color: transparent !important; border-color: transparent !important;}
+.auth-provider-logo a { padding: 0 !important; display: inline-block; border-radius: 4px;}
+.auth-provider-logo img { width: 24px; }
+
+.settings-social { padding: 0; list-style: none; margin: 0 0 0 4px; display: inline-block; }
+.settings-social li { display: inline-block; }
+.settings-social li a:hover, .settings-social li:hover { background-color: transparent !important; }
+
+.comment-user img { height: 24px !important; }
