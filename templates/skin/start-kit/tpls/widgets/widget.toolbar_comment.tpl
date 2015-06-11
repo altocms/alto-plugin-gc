@@ -7,7 +7,8 @@
         <a href="#" class="new-comments" id="new_comments_counter" style="display: none;"
            title="{$aLang.comment_count_new}" onclick="ls.comments.goToNextComment(); return false;"></a>
 
-        <input type="hidden" id="comment_last_id" value="{$params.iMaxIdComment}"/>
-        <input type="hidden" id="comment_use_paging" value="{if $aPagingCmt AND $aPagingCmt.iCountPage>1}1{/if}"/>
+
     </section>
 {/if}
+<input type="hidden" id="comment_last_id" value="{$params.iMaxIdComment}"/>
+<input type="hidden" id="comment_use_paging" value="{if $aPagingCmt AND $aPagingCmt.iCountPage>1}1{/if}"/>
