@@ -144,7 +144,7 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // Если нет валидного токена соцсети, смотрим через капчу с email
         /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
-        if (!($oToken = $this->PluginGc_CommentProvider_ValidateCommentRight())) {
+        if (!($oToken = $this->PluginGc_CommentProvider_ValidateCommentRight()) && Config::Get('plugin.gc.mode') != 'social') {
 
             if (version_compare(ALTO_VERSION, '1.1.0-alpha', '<=')) {
                 if (!isset($_SESSION['comment_captcha_keystring']) || mb_strtolower($_SESSION['comment_captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
@@ -193,7 +193,11 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         }
 
+        if (!$bViaMail && !$oToken) {
+            $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_token'), $this->Lang_Get('error'));
 
+            return;
+        }
 
 
         // Проверяем топик

@@ -1,7 +1,7 @@
  {* Тема оформления Experience v.1.0  для Alto CMS      *}
  {* @licence     CC Attribution-ShareAlike   *}
 
-{wgroup_add group='toolbar' name='toolbar_comment.tpl'
+ {wgroup_add group='toolbar' name="widgets/widget.toolbar_comment.tpl"
     aPagingCmt=$aPagingCmt
     iTargetId=$iTargetId
     sTargetType=$sTargetType

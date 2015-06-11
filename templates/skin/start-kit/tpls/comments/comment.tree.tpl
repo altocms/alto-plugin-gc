@@ -1,8 +1,8 @@
-{wgroup_add group='toolbar' name='toolbar_comment.tpl'
-aPagingCmt=$aPagingCmt
-iTargetId=$iTargetId
-sTargetType=$sTargetType
-iMaxIdComment=$iMaxIdComment
+{wgroup_add group='toolbar' name="widgets/widget.toolbar_comment.tpl"
+    aPagingCmt=$aPagingCmt
+    iTargetId=$iTargetId
+    sTargetType=$sTargetType
+    iMaxIdComment=$iMaxIdComment
 }
 
 {hook run='comment_tree_begin' iTargetId=$iTargetId sTargetType=$sTargetType}

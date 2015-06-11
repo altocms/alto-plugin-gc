@@ -45,6 +45,7 @@ class PluginGc extends Plugin {
 
             // Виджет последних комментариев
             'widgets/widget.stream_comment.tpl' => '_widgets/widget.stream_comment.tpl',
+            'widgets/widget.toolbar_comment.tpl' => '_widgets/widget.toolbar_comment.tpl',
 
             // Письма
             'emails/ru/email.comment_new.tpl'  ,
