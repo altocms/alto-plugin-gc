@@ -238,7 +238,12 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         // * Проверяем текст комментария
         $sText = $this->Text_Parser(F::GetRequestStr('comment_text'));
         if (!F::CheckVal($sText, 'text', Config::Val('module.comment.min_length', 2), Config::Val('module.comment.max_length', 10000))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_add_text_error'), $this->Lang_Get('error'));
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('topic_comment_text_len', array(
+                    'min' => Config::Val('module.comment.min_length', 2),
+                    'max' => Config::Val('module.comment.max_length', 10000),
+                )),
+                $this->Lang_Get('error'));
 
             return;
         }
