@@ -21,7 +21,7 @@ class PluginGc_ModuleUploader extends PluginGc_Inherit_ModuleUploader {
         return $sExtension;
     }
 
-    protected function _checkUploadedFile($sFile) {
+    protected function _checkUploadedFile($sFile, $sConfigKey = 'default') {
 
         $sExtension = $this->GetExtension($sFile);
 
