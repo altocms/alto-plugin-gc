@@ -112,6 +112,12 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
     }
 
 
+    private function _verifyCaptcha() {
+
+        return isset($_SESSION['captcha_keystring']) &&
+            (mb_strtolower($_SESSION['captcha_keystring']) === mb_strtolower(F::GetRequestStr('comment-captcha', FALSE, 'post')));
+    }
+
     /**
      * Обработка добавление комментария к топику
      *
@@ -144,29 +150,22 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // Если нет валидного токена соцсети, смотрим через капчу с email
         /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
-        if (!($oToken = $this->PluginGc_CommentProvider_ValidateCommentRight()) && Config::Get('plugin.gc.mode') != 'social') {
+        $oToken = $this->PluginGc_CommentProvider_ValidateCommentRight();
+        if (!($oToken) && Config::Get('plugin.gc.mode') !== 'social') {
 
-            if (version_compare(ALTO_VERSION, '1.1.0-alpha', '<=')) {
-                if (!isset($_SESSION['comment_captcha_keystring']) || mb_strtolower($_SESSION['comment_captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
-                    $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
+            if (!$this->_verifyCaptcha()) {
+                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
 
-                    return;
-                }
-            } else {
-                if (!isset($_SESSION['captcha_keystring']) || mb_strtolower($_SESSION['captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
-                    $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
-
-                    return;
-                }
+                return;
             }
 
-            if (!F::CheckVal($sGuestLogin = getRequest('guest_login', FALSE), 'text', 2, 100)) {
+            if (!F::CheckVal($sGuestLogin = F::GetRequestStr('guest_login', FALSE), 'text', 2, 100)) {
                 $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_guest_login'), $this->Lang_Get('error'));
 
                 return;
             }
 
-            if (!F::CheckVal($sGuestMail = getRequest('guest_mail', FALSE), 'mail')) {
+            if (!F::CheckVal($sGuestMail = F::GetRequestStr('guest_mail', FALSE), 'mail')) {
                 $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_guest_mail'), $this->Lang_Get('error'));
 
                 return;
@@ -179,15 +178,15 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
             $bViaMail = TRUE;
 
-            if (!isset($_SESSION['comment_captcha_keystring']) || mb_strtolower($_SESSION['comment_captcha_keystring']) != mb_strtolower(getRequest('comment-captcha', FALSE))) {
+            if (!$this->_verifyCaptcha()) {
                 $bViaMail = FALSE;
             }
 
-            if (!F::CheckVal($sGuestLogin = getRequest('guest_login', FALSE), 'text', 2, 100)) {
+            if (!F::CheckVal($sGuestLogin = F::GetRequestStr('guest_login', FALSE), 'text', 2, 100)) {
                 $bViaMail = FALSE;
             }
 
-            if (!F::CheckVal($sGuestMail = getRequest('guest_mail', FALSE), 'mail')) {
+            if (!F::CheckVal($sGuestMail = F::GetRequestStr('guest_mail', FALSE), 'mail')) {
                 $bViaMail = FALSE;
             }
 
@@ -367,3 +366,5 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         }
     }
 }
+
+// EOF
