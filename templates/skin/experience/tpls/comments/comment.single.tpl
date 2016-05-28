@@ -2,7 +2,6 @@
  {* @licence     CC Attribution-ShareAlike   *}
 
 {$oUser=$oComment->getUser()}
-{$oVote=$oComment->getVote()}
 
 {if $sDateReadLast==''}
     {$sTargetType = $oComment->getTargetType()}
@@ -53,13 +52,13 @@
                                     </a>
                                 {else}
                                     <a href="{if $iSocialLink}{$iSocialLink}{else}#{/if}" rel="nofollow" class="mal0 js-popup-user">
-                                        <img class="logo-image" class="mal0" width="24px" src="{$oUser->getAvatarUrl(24)}"/>
+                                        <img class="logo-image" width="24px" src="{$oUser->getAvatarUrl(24)}"/>
                                     </a>
                                 {/if}
                                 {if $iSocialLink}
                                     <a href="{$iSocialLink}" class="userlogo link link-blue link-lead link-clear" rel="nofollow">{$oComment->getGuestLogin()}</a>
                                 {else}
-                                    <span>{$oComment->getGuestLogin()}</span>
+                                    <span class="userlogo">{$oComment->getGuestLogin()}</span>
                                 {/if}
                             {/if}
                         </li>

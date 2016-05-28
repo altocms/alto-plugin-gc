@@ -1,5 +1,4 @@
 {$oUser=$oComment->getUser()}
-{$oVote=$oComment->getVote()}
 
 {$sCommentClass = ""}
 {if $oComment->isBad()}
@@ -20,11 +19,13 @@
                 <img src="{$oUser->getAvatarUrl(64)}" alt="{$oUser->getDisplayName()}"/>
             </a>
         {else}
-            {if $oComment->getImage()}
-                <img class="logo-image" width="64px" src="{$oComment->getImage()}"/>
-            {else}
-                <img class="logo-image" width="64px" src="{$oUser->getAvatarUrl(64)}"/>
-            {/if}
+            <div class="comment-avatar">
+                {if $oComment->getImage()}
+                    <img class="logo-image" width="64px" src="{$oComment->getImage()}"/>
+                {else}
+                    <img class="logo-image" width="64px" src="{$oUser->getAvatarUrl(64)}"/>
+                {/if}
+            </div>
         {/if}
         <ul class="list-unstyled small comment-info">
             {if is_null($oComment->getGuestLogin())}
@@ -34,12 +35,14 @@
                        class="comment-topic-author"{/if}>{$oUser->getDisplayName()}</a>
                 </li>
             {else}
+                <li class="comment-info-author">
                 {$iSocialLink=$oComment->getSocialLink()}
                 {if $iSocialLink}
                     <a href="{$iSocialLink}" rel="nofollow">{$oComment->getGuestLogin()}</a>
                 {else}
                     <span>{$oComment->getGuestLogin()}</span>
                 {/if}
+                </li>
             {/if}
             <li class="comment-info-date">
                 <a href="{if Config::Get('module.comment.nested_per_page')}{router page='comments'}{else}#comment{/if}{$oComment->getId()}"
