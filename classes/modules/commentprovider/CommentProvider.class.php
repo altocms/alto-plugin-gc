@@ -18,6 +18,21 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      */
     protected $aProviders = array();
 
+    protected function _makeProviderClass($sProviderName, $aProviderData)
+    {
+        /** @noinspection PhpIncludeInspection */
+        include_once __DIR__ . '/../../../lib/providers/' . ucwords($sProviderName) . '.class.php';
+
+        /** @var string $sProviderClassName Имя класса провайдера */
+        $sProviderClassName = ucwords($sProviderName) . 'CommentProvider';
+        $oProvider = new $sProviderClassName(
+            $sProviderName,
+            $aProviderData,
+            TRUE
+        );
+        return $oProvider;
+    }
+
     /**
      * Инициализация модуля
      */
@@ -25,11 +40,6 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
         parent::Init();
 
         foreach (Config::Get('plugin.gc.providers') as $sProviderName => $aProviderData) {
-            /** @noinspection PhpIncludeInspection */
-            include_once __DIR__ . '/../../../lib/providers/' . ucwords($sProviderName) . '.class.php';
-
-            /** @var string $sProviderClassName Имя класса провайдера */
-            $sProviderClassName = ucwords($sProviderName) . 'CommentProvider';
 
             if (isset($this->aProviders[$sProviderName]))
                 continue;
@@ -43,17 +53,12 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
                 continue;
             }
 
-            $this->aProviders[$sProviderName] = new $sProviderClassName(
-                $sProviderName,
-                $aProviderData,
-                TRUE
-            );
-
+            $oProvider = $this->_makeProviderClass($sProviderName, $aProviderData);
             /**
-             * Если была ошибка создания объекта авторизации
+             * Проверяем, не было ли  ошибки создания объекта авторизации
              */
-            if ($this->aProviders[$sProviderName]->getLastError()) {
-                unset($this->aProviders[$sProviderName]);
+            if ($oProvider && !$oProvider->getLastError()) {
+                $this->aProviders[$sProviderName] = $oProvider;
             }
         }
 
