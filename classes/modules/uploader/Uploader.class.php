@@ -7,11 +7,16 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина ar
- * @version     0.0.1 от 01.08.2014 13:07
  */
-class PluginGc_ModuleUploader extends PluginGc_Inherit_ModuleUploader {
+class PluginGc_ModuleUploader extends PluginGc_Inherits_ModuleUploader {
 
+    /**
+     * @param $sFile
+     *
+     * @return mixed|string
+     */
     public function GetExtension($sFile) {
+
         $sExtension = strtolower(pathinfo($sFile, PATHINFO_EXTENSION));
         if (!$sExtension) {
             list($iWidth, $iHheight, $sFileType) = getimagesize($sFile);
@@ -21,6 +26,12 @@ class PluginGc_ModuleUploader extends PluginGc_Inherit_ModuleUploader {
         return $sExtension;
     }
 
+    /**
+     * @param        $sFile
+     * @param string $sConfigKey
+     *
+     * @return bool
+     */
     protected function _checkUploadedFile($sFile, $sConfigKey = 'default') {
 
         $sExtension = $this->GetExtension($sFile);
@@ -50,3 +61,5 @@ class PluginGc_ModuleUploader extends PluginGc_Inherit_ModuleUploader {
     }
 
 }
+
+// EOF

@@ -7,9 +7,8 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
- * @version     0.0.1 от 03.09.2014 13:26
  */
-class PluginGc_ModuleComment_MapperComment extends PluginGc_Inherit_ModuleComment_MapperComment {
+class PluginGc_ModuleComment_MapperComment extends PluginGc_Inherits_ModuleComment_MapperComment {
 
     public function AddComment(ModuleComment_EntityComment $oComment) {
 
@@ -114,4 +113,7 @@ class PluginGc_ModuleComment_MapperComment extends PluginGc_Inherit_ModuleCommen
         }
         return $aResult;
     }
+
 }
+
+// EOF

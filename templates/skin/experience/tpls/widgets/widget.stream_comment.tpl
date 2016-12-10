@@ -21,7 +21,7 @@
                     {if !is_null($oComment->getGuestLogin())}
                         {$oComment->getGuestLogin()}
                     {else}
-                        <img src="{$oUser->getAvatarUrl(20)}" alt="{$oUser->getDisplayName()}"/>
+                        <img src="{$oUser->getAvatarUrl('small')}" {$oUser->getAvatarImageSizeAttr('small')} alt="{$oUser->getDisplayName()}"/>
                         <a class="userlogo link link-dual link-lead link-clear" href="{$oUser->getProfileUrl()}">
                             {$oUser->getDisplayName()}
                         </a>

@@ -7,7 +7,6 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
- * @version     0.0.1 от 30.07.2014 23:55
  */
 class PluginGc_ModuleCommentProvider extends ModuleORM {
 
@@ -37,6 +36,7 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      * Инициализация модуля
      */
     public function Init() {
+
         parent::Init();
 
         foreach (Config::Get('plugin.gc.providers') as $sProviderName => $aProviderData) {
@@ -61,18 +61,19 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
                 $this->aProviders[$sProviderName] = $oProvider;
             }
         }
-
     }
 
     /**
      * Получение пользователя по данным токена
      *
      * @param PluginAr_ModuleAuthProvider_EntityUserToken $oToken
+     *
      * @return bool|ModuleUser_EntityUser
      */
     public function GetUserByTokenData($oToken) {
+
         /** @var array|PluginAr_ModuleAuthProvider_EntityUserToken $oResult */
-        $oResult = $this->PluginGc_CommentProvider_GetUserTokenItemsByFilter(array(
+        $oResult = E::Module('PluginGc\CommentProvider')->GetUserTokenItemsByFilter(array(
             'token_data' => $oToken->getTokenData(),
         ));
 
@@ -94,11 +95,13 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      * Получение пользователя по токену
      *
      * @param PluginAr_ModuleAuthProvider_EntityUserToken $oToken
+     *
      * @return bool|ModuleUser_EntityUser
      */
     public function GetUserByToken($oToken) {
+
         /** @var PluginAr_ModuleAuthProvider_EntityUserToken|array $oResult */
-        $oResult = $this->PluginGc_CommentProvider_GetUserTokenItemsByFilter(array(
+        $oResult = E::Module('PluginGc\CommentProvider')->GetUserTokenItemsByFilter(array(
             'token_provider_user_id' => $oToken->getTokenProviderUserId(),
             'token_provider_name'    => $oToken->getTokenProviderName(),
         ));
@@ -123,9 +126,11 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      * Получение провайдера по его имени
      *
      * @param $sProviderName
+     *
      * @return AuthProvider|bool
      */
     public function GetProviderByName($sProviderName) {
+
         return isset($this->aProviders[$sProviderName]) ? $this->aProviders[$sProviderName] : FALSE;
     }
 
@@ -135,37 +140,39 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      * @return AuthProvider[]
      */
     public function GetProviders() {
+
         return $this->aProviders;
     }
 
     /**
      * Сохраняет данные пользхователя
+     *
      * @param PluginGc_ModuleCommentProvider_EntityData $oUserData
      * @param $oToken
      */
     public function SaveUserData($oUserData, $oToken) {
+
         $oToken->setTokenUserEmail($oUserData->getDataMail());
 
         $sUserName = trim($oUserData->getDataName() . ' ' .$oUserData->getDataSurname());
-        $oToken->setTokenUserLogin($sUserName?$sUserName:$this->Lang_Get('plugin.gc.guest'));
+        $oToken->setTokenUserLogin($sUserName?$sUserName:E::Module('Lang')->Get('plugin.gc.guest'));
 
-        $sUserLogoUrl = $this->Uploader_UploadRemote($oUserData->getDataPhoto());
+        $sUserLogoUrl = E::Module('Uploader')->UploadRemote($oUserData->getDataPhoto());
         $sUserLogoUrlNew = FALSE;
         if ($sUserLogoUrl) {
-            $sFileTmp = $this->Img_TransformFile($sUserLogoUrl, 'topic', array());
+            $sFileTmp = E::Module('Img')->TransformFile($sUserLogoUrl, 'topic', array());
             if ($sFileTmp) {
-                $sDirUpload = $this->Uploader_GetUserImageDir(0);
-                $sFileImage = $this->Uploader_Uniqname($sDirUpload, F::File_GetExtension($sFileTmp, true));
-                if ($xStoredFile = $this->Uploader_Store($sFileTmp, $sFileImage)) {
+                $sDirUpload = E::Module('Uploader')->GetUserImageDir(0);
+                $sFileImage = E::Module('Uploader')->Uniqname($sDirUpload, F::File_GetExtension($sFileTmp, true));
+                if ($xStoredFile = E::Module('Uploader')->Store($sFileTmp, $sFileImage)) {
                     if (is_object($xStoredFile)) {
                         $sUserLogoUrlNew = $xStoredFile->GetUrl();
                     } else {
-                        $sUserLogoUrlNew = $this->Uploader_Dir2Url($xStoredFile);
+                        $sUserLogoUrlNew = E::Module('Uploader')->Dir2Url($xStoredFile);
                     }
                 }
             }
         }
-
 
         $oToken->setTokenImage($sUserLogoUrlNew);
         $oToken->Add();
@@ -176,32 +183,39 @@ class PluginGc_ModuleCommentProvider extends ModuleORM {
      */
     public function ValidateCommentRight() {
 
-        $sTokenId = $this->Session_Get('comment_token_id');
-        $sTokenHash = $this->Session_GetCookie('comment_token_hash');
+        $sTokenId = E::Module('Session')->Get('comment_token_id');
+        $sTokenHash = E::Module('Session')->GetCookie('comment_token_hash');
 
         if ($sTokenId && $sTokenHash) {
 
             /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
-            $oToken = $this->PluginGc_CommentProvider_GetUserTokenByTokenId($sTokenId);
+            $oToken = E::Module('PluginGc\CommentProvider')->GetUserTokenByTokenId($sTokenId);
 
             if ($oToken && md5(Config::Get('plugin.gc.salt') . $oToken->getTokenData()) == $sTokenHash) {
                 return $oToken;
             }
-
         }
 
         return FALSE;
     }
 
-
+    /**
+     * @param $sUrl
+     * @param $oUser
+     *
+     * @return bool
+     */
     public function UploadUserImageByUrl($sUrl, $oUser) {
 
-        if ($sFileTmp = $this->Uploader_UploadRemote($sUrl)) {
-            if ($sFileUrl = $this->User_UploadAvatar($sFileTmp, $oUser, array())) {
+        if ($sFileTmp = E::Module('Uploader')->UploadRemote($sUrl)) {
+            if ($sFileUrl = E::Module('User')->UploadAvatar($sFileTmp, $oUser, array())) {
                 return $sFileUrl;
             }
         }
 
         return FALSE;
     }
+
 }
+
+// EOF

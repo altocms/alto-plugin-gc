@@ -31,7 +31,7 @@
                         data-animation="true"
                         data-cache="true"
                         class="user-block">
-                        <img src="{$oUser->getAvatarUrl('small')}" alt="{$oUser->getDisplayName()}"/>
+                        <img src="{$oUser->getAvatarUrl('small')}" {$oUser->getAvatarImageSizeAttr('small')} {$oUser->getAvatarImageSizeAttr('small')} alt="{$oUser->getDisplayName()}"/>
                         <a class="userlogo link link-dual link-lead link-clear mal0" href="{$oUser->getProfileUrl()}">
                             {$oUser->getDisplayName()}
                         </a>

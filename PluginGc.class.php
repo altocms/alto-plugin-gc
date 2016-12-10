@@ -9,7 +9,7 @@
  * ----------------------------------------------------------------------------
  */
 
-/** Запрещаем напрямую через браузер обращение к этому файлу.  */
+/* Запрещаем напрямую через браузер обращение к этому файлу */
 if (!class_exists('Plugin')) {
     die('Hacking attempt!');
 }
@@ -22,11 +22,6 @@ if (!class_exists('Plugin')) {
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
  *
- * @method void Viewer_AppendStyle
- * @method void Viewer_AppendScript
- * @method void Viewer_Assign
- *
- * @version     0.0.1 от 03.09.2014 10:01
  */
 class PluginGc extends Plugin {
 
@@ -86,12 +81,13 @@ class PluginGc extends Plugin {
      * @return bool
      */
     public function Activate() {
+
         if (!$this->isFieldExists('prefix_comment', 'comment_guest_login')) {
-            $this->ExportSQL(dirname(__FILE__) . '/sql/install.sql');
+            $this->ExportSQL(dirname(__FILE__) . '/install/db/install.sql');
         }
 
         if (!$this->isFieldExists('prefix_comment', 'comment_image')) {
-            $this->ExportSQL(dirname(__FILE__) . '/sql/update-to-1.1.sql');
+            $this->ExportSQL(dirname(__FILE__) . '/install/db/update-to-1.1.sql');
         }
 
         return TRUE;
@@ -102,6 +98,7 @@ class PluginGc extends Plugin {
      * @return bool
      */
     public function Deactivate() {
+
         return TRUE;
     }
 
@@ -109,9 +106,14 @@ class PluginGc extends Plugin {
      * Инициализация плагина
      */
     public function Init() {
-        $this->Viewer_Assign("sTemplatePathGc", Plugin::GetTemplatePath(__CLASS__));
-        $this->Viewer_AppendStyle(Plugin::GetTemplatePath(__CLASS__) . "assets/css/style.css"); // Добавление своего CSS
-        $this->Viewer_AppendScript(Plugin::GetTemplatePath(__CLASS__) . "assets/js/script.js"); // Добавление своего JS
+
+        E::Module('Viewer')->Assign('sTemplatePathGc', Plugin::GetTemplateDir(__CLASS__));
+        E::Module('Viewer')->AppendStyle(Plugin::GetTemplateDir(__CLASS__) . 'assets/css/style.css'); // Добавление своего CSS
+        E::Module('Viewer')->AppendScript(Plugin::GetTemplateDir(__CLASS__) . 'assets/js/script.js'); // Добавление своего JS
+
+        return TRUE;
     }
 
 }
+
+// EOF

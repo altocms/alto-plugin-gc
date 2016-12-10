@@ -9,7 +9,7 @@
  *              Является частью плагина Av
  * @version     0.0.1 от 20.08.14 10:27
  */
-class PluginGc_ModuleVote_MapperVote extends PluginGc_Inherit_ModuleVote_MapperVote {
+class PluginGc_ModuleVote_MapperVote extends PluginGc_Inherits_ModuleVote_MapperVote {
 
     /**
      * Проверяет забанен ли пользователь или нет
@@ -31,7 +31,8 @@ class PluginGc_ModuleVote_MapperVote extends PluginGc_Inherit_ModuleVote_MapperV
         }
 
         return FALSE;
-
     }
 
 }
+
+// EOF

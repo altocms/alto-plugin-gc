@@ -24,13 +24,16 @@
  * @method void setTokenDataSecret
  */
 class PluginGc_ModuleCommentProvider_EntityUserToken extends EntityORM {
+
     protected $aRelations = array(
         'user' => array(EntityORM::RELATION_TYPE_BELONGS_TO, 'ModuleUser_EntityUser', 'token_user_id'),
     );
 
     public function getUserByTokenUserId($iUserId) {
-        return $this->User_GetUserById($iUserId);
+
+        return E::Module('User')->GetUserById($iUserId);
     }
 
-
 }
+
+// EOF

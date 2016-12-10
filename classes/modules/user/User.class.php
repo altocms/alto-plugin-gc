@@ -7,9 +7,8 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Ar
- * @version     0.0.1 от 16.12.2014 23:50
  */
-class PluginGc_ModuleUser extends PluginGc_Inherit_ModuleUser {
+class PluginGc_ModuleUser extends PluginGc_Inherits_ModuleUser {
 
     public function UploadAvatar($sFile, $oUser, $aSize = array()) {
 
@@ -17,7 +16,7 @@ class PluginGc_ModuleUser extends PluginGc_Inherit_ModuleUser {
             return FALSE;
         }
         if (!$aSize) {
-            $oImg = $this->Img_CropSquare($sFile, TRUE);
+            $oImg = E::Module('Img')->CropSquare($sFile, TRUE);
         } else {
             if (!isset($aSize['w'])) {
                 $aSize['w'] = $aSize['x2'] - $aSize['x1'];
@@ -25,10 +24,10 @@ class PluginGc_ModuleUser extends PluginGc_Inherit_ModuleUser {
             if (!isset($aSize['h'])) {
                 $aSize['h'] = $aSize['y2'] - $aSize['y1'];
             }
-            $oImg = $this->Img_Crop($sFile, $aSize['w'], $aSize['h'], $aSize['x1'], $aSize['y1']);
+            $oImg = E::Module('Img')->Crop($sFile, $aSize['w'], $aSize['h'], $aSize['x1'], $aSize['y1']);
         }
 
-        $sExtension = $this->Uploader_GetExtension($sFile);
+        $sExtension = E::Module('Uploader')->GetExtension($sFile);
 
         $sName = pathinfo($sFile, PATHINFO_FILENAME);
 
@@ -36,22 +35,24 @@ class PluginGc_ModuleUser extends PluginGc_Inherit_ModuleUser {
         if ($sTmpFile = $oImg->Save(F::File_UploadUniqname($sExtension))) {
 
             // Файл, куда будет записан аватар
-            $sAvatar = $this->Uploader_GetUserAvatarDir($oUser->GetId()) . $sName . '.' . $sExtension;
+            $sAvatar = E::Module('Uploader')->GetUserAvatarDir($oUser->GetId()) . $sName . '.' . $sExtension;
 
             // Окончательная запись файла только через модуль Uploader
-            if ($xStoredFile = $this->Uploader_Store($sTmpFile, $sAvatar)) {
+            if ($xStoredFile = E::Module('Uploader')->Store($sTmpFile, $sAvatar)) {
                 if (is_object($xStoredFile)) {
                     return $xStoredFile->GetUrl();
                 } else {
-                    return $this->Uploader_Dir2Url($xStoredFile);
+                    return E::Module('Uploader')->Dir2Url($xStoredFile);
                 }
             }
         }
 
         // * В случае ошибки, возвращаем false
-        $this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+        E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'));
 
         return FALSE;
     }
 
 }
+
+// EOF

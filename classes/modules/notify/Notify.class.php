@@ -7,9 +7,8 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
- * @version     0.0.1 от 05.09.2014 11:14
  */
-class PluginGc_ModuleNotify extends PluginGc_Inherit_ModuleNotify {
+class PluginGc_ModuleNotify extends PluginGc_Inherits_ModuleNotify {
 
     /**
      * Глушим пересылку гостям
@@ -18,6 +17,8 @@ class PluginGc_ModuleNotify extends PluginGc_Inherit_ModuleNotify {
      * @param ModuleTopic_EntityTopic $oTopic
      * @param ModuleComment_EntityComment $oComment
      * @param ModuleUser_EntityUser $oUserComment
+     *
+     * @return bool
      */
     public function SendCommentReplyToAuthorParentComment(
         ModuleUser_EntityUser $oUserTo, ModuleTopic_EntityTopic $oTopic, ModuleComment_EntityComment $oComment,
@@ -27,7 +28,9 @@ class PluginGc_ModuleNotify extends PluginGc_Inherit_ModuleNotify {
             return TRUE;
         }
 
-        parent::SendCommentReplyToAuthorParentComment($oUserTo, $oTopic, $oComment, $oUserComment);
+        return parent::SendCommentReplyToAuthorParentComment($oUserTo, $oTopic, $oComment, $oUserComment);
     }
 
 }
+
+// EOF

@@ -9,7 +9,7 @@
  * ----------------------------------------------------------------------------
  */
 
-class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
+class PluginGc_ActionBlog extends PluginGc_Inherits_ActionBlog {
 
     /**
      * Получение новых комментариев
@@ -26,33 +26,33 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // ЗДЕСЬ ПОЛЬЗОВАТЕЛЬ НЕ АВТОРИЗОВАН
         /** @var ModuleUser_EntityUser $oGuestUser */
-        $oGuestUser = $this->User_GetUserByLogin(Config::Get('plugin.gc.guest_login'));
+        $oGuestUser = E::Module('User')->GetUserByLogin(Config::Get('plugin.gc.guest_login'));
         if (!$oGuestUser) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Устанавливаем формат Ajax ответа
-        $this->Viewer_SetResponseAjax('json');
+        E::Module('Viewer')->SetResponseAjax('json');
 
 //        // * Пользователь авторизован?
 //        if (!$this->oUserCurrent) {
-//            $this->Message_AddErrorSingle($this->Lang_Get('need_authorization'), $this->Lang_Get('error'));
+//            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('need_authorization'), E::Module('Lang')->Get('error'));
 //            return;
 //        }
 
         // * Топик существует?
         $iTopicId = intval(F::GetRequestStr('idTarget', NULL, 'post'));
         if (!$iTopicId || !($oTopic = $this->Topic_GetTopicById($iTopicId))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Есть доступ к комментариям этого топика? Закрытый блог?
         if (!$this->ACL_IsAllowShowBlog($oTopic->getBlog(), $oGuestUser)) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -63,16 +63,16 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // * Если используется постраничность, возвращаем только добавленный комментарий
         if (F::GetRequest('bUsePaging', NULL, 'post') && $selfIdComment) {
-            $oComment = $this->Comment_GetCommentById($selfIdComment);
+            $oComment = E::Module('Comment')->GetCommentById($selfIdComment);
             if ($oComment && ($oComment->getTargetId() == $oTopic->getId())
                 && ($oComment->getTargetType() == 'topic')
             ) {
-                $oViewerLocal = $this->Viewer_GetLocalViewer();
+                $oViewerLocal = E::Module('Viewer')->GetLocalViewer();
                 $oViewerLocal->Assign('oUserCurrent', $oGuestUser);
                 $oViewerLocal->Assign('bOneComment', TRUE);
 
                 $oViewerLocal->Assign('oComment', $oComment);
-                $sText = $oViewerLocal->Fetch($this->Comment_GetTemplateCommentByTarget($oTopic->getId(), 'topic'));
+                $sText = $oViewerLocal->Fetch(E::Module('Comment')->GetTemplateCommentByTarget($oTopic->getId(), 'topic'));
                 $aCmt = array();
                 $aCmt[] = array(
                     'html' => $sText,
@@ -84,7 +84,7 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
             $aReturn['comments'] = $aCmt;
             $aReturn['iMaxIdComment'] = $selfIdComment;
         } else {
-            $aReturn = $this->Comment_GetCommentsNewByTargetId($oTopic->getId(), 'topic', $idCommentLast);
+            $aReturn = E::Module('Comment')->GetCommentsNewByTargetId($oTopic->getId(), 'topic', $idCommentLast);
         }
         $iMaxIdComment = $aReturn['iMaxIdComment'];
 
@@ -107,8 +107,8 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
             }
         }
 
-        $this->Viewer_AssignAjax('iMaxIdComment', $iMaxIdComment);
-        $this->Viewer_AssignAjax('aComments', $aComments);
+        E::Module('Viewer')->AssignAjax('iMaxIdComment', $iMaxIdComment);
+        E::Module('Viewer')->AssignAjax('aComments', $aComments);
     }
 
 
@@ -133,7 +133,7 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // * А не забанен ли
         if ($this->Vote_IpIsBanned(F::GetUserIp())) {
-            $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.user_is_banned'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('plugin.gc.user_is_banned'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -141,32 +141,32 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // ЗДЕСЬ ПОЛЬЗОВАТЕЛЬ НЕ АВТОРИЗОВАН
         /** @var ModuleUser_EntityUser $oGuestUser */
-        $oGuestUser = $this->User_GetUserByLogin(Config::Get('plugin.gc.guest_login'));
+        $oGuestUser = E::Module('User')->GetUserByLogin(Config::Get('plugin.gc.guest_login'));
         if (!$oGuestUser) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // Если нет валидного токена соцсети, смотрим через капчу с email
         /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
-        $oToken = $this->PluginGc_CommentProvider_ValidateCommentRight();
+        $oToken = E::Module('PluginGc\CommentProvider')->ValidateCommentRight();
         if (!($oToken) && Config::Get('plugin.gc.mode') !== 'social') {
 
             if (!$this->_verifyCaptcha()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_captcha'), $this->Lang_Get('error'));
+                E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('plugin.gc.error_captcha'), E::Module('Lang')->Get('error'));
 
                 return;
             }
 
             if (!F::CheckVal($sGuestLogin = F::GetRequestStr('guest_login', FALSE), 'text', 2, 100)) {
-                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_guest_login'), $this->Lang_Get('error'));
+                E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('plugin.gc.error_guest_login'), E::Module('Lang')->Get('error'));
 
                 return;
             }
 
             if (!F::CheckVal($sGuestMail = F::GetRequestStr('guest_mail', FALSE), 'mail')) {
-                $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_guest_mail'), $this->Lang_Get('error'));
+                E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('plugin.gc.error_guest_mail'), E::Module('Lang')->Get('error'));
 
                 return;
             }
@@ -193,7 +193,7 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         }
 
         if (!$bViaMail && !$oToken) {
-            $this->Message_AddErrorSingle($this->Lang_Get('plugin.gc.error_token'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('plugin.gc.error_token'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -201,35 +201,35 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
 
         // Проверяем топик
         if (!($oTopic = $this->Topic_GetTopicById(F::GetRequestStr('cmt_target_id')))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Возможность постить коммент в топик в черновиках
         if (!$oTopic->getPublish()) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Проверяем разрешено ли постить комменты
         if (!$this->ACL_CanPostComment($oGuestUser, $oTopic)) {
-            $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_acl'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('topic_comment_acl'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Проверяем разрешено ли постить комменты по времени
         if (!$this->ACL_CanPostCommentTime($oGuestUser)) {
-            $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_limit'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('topic_comment_limit'), E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Проверяем запрет на добавления коммента автором топика
         if ($oTopic->getForbidComment()) {
-            $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_notallow'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('topic_comment_notallow'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -237,19 +237,19 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         // * Проверяем текст комментария
         $sText = $this->Text_Parser(F::GetRequestStr('comment_text'));
         if (!F::CheckVal($sText, 'text', Config::Val('module.comment.min_length', 2), Config::Val('module.comment.max_length', 10000))) {
-            $this->Message_AddErrorSingle(
-                $this->Lang_Get('topic_comment_text_len', array(
+            E::Module('Message')->AddErrorSingle(
+                E::Module('Lang')->Get('topic_comment_text_len', array(
                     'min' => Config::Val('module.comment.min_length', 2),
                     'max' => Config::Val('module.comment.max_length', 10000),
                 )),
-                $this->Lang_Get('error'));
+                E::Module('Lang')->Get('error'));
 
             return;
         }
 
         // * Проверям на какой коммент отвечаем
         if (!$this->isPost('reply')) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -257,14 +257,14 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         $iParentId = intval(F::GetRequest('reply'));
         if ($iParentId != 0) {
             // * Проверяем существует ли комментарий на который отвечаем
-            if (!($oCommentParent = $this->Comment_GetCommentById($iParentId))) {
-                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            if (!($oCommentParent = E::Module('Comment')->GetCommentById($iParentId))) {
+                E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
                 return;
             }
             // * Проверяем из одного топика ли новый коммент и тот на который отвечаем
             if ($oCommentParent->getTargetId() != $oTopic->getId()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
 
                 return;
             }
@@ -275,8 +275,8 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
         }
 
         // * Проверка на дублирующий коммент
-        if ($this->Comment_GetCommentUnique($oTopic->getId(), 'topic', $oGuestUser->getId(), $iParentId, md5($sText))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_spam'), $this->Lang_Get('error'));
+        if (E::Module('Comment')->GetCommentUnique($oTopic->getId(), 'topic', $oGuestUser->getId(), $iParentId, md5($sText))) {
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('topic_comment_spam'), E::Module('Lang')->Get('error'));
 
             return;
         }
@@ -312,13 +312,13 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
             'comment_add_before',
             array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic)
         );
-        if ($this->Comment_AddComment($oCommentNew)) {
+        if (E::Module('Comment')->AddComment($oCommentNew)) {
             $this->Hook_Run(
                 'comment_add_after',
                 array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic)
             );
 
-            $this->Viewer_AssignAjax('sCommentId', $oCommentNew->getId());
+            E::Module('Viewer')->AssignAjax('sCommentId', $oCommentNew->getId());
             if ($oTopic->getPublish()) {
 
                 // * Добавляем коммент в прямой эфир если топик не в черновиках
@@ -329,20 +329,21 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
                 $oCommentOnline->setTargetParentId($oCommentNew->getTargetParentId());
                 $oCommentOnline->setCommentId($oCommentNew->getId());
 
-                $this->Comment_AddCommentOnline($oCommentOnline);
+                E::Module('Comment')->AddCommentOnline($oCommentOnline);
             }
 
             // * Список емайлов на которые не нужно отправлять уведомление
             $aExcludeMail = array($oGuestUser->getMail());
 
             // * Отправляем уведомление тому на чей коммент ответили
-            if ($oCommentParent && $oCommentParent->getUserId() != $oTopic->getUserId()
-                && $oCommentNew->getUserId() != $oCommentParent->getUserId()
+            if ($oCommentParent
+                && ($oCommentParent->getUserId() != $oTopic->getUserId())
+                && ($oCommentNew->getUserId() != $oCommentParent->getUserId())
             ) {
                 $oUserAuthorComment = $oCommentParent->getUser();
                 $aExcludeMail[] = $oUserAuthorComment->getMail();
                 // @todo Отправка сообщения об анонимном коммнтарии
-                $this->Notify_SendCommentReplyToAuthorParentComment(
+                E::Module('Notify')->SendCommentReplyToAuthorParentComment(
                     $oUserAuthorComment, $oTopic, $oCommentNew, $oGuestUser
                 );
             }
@@ -350,7 +351,7 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
             // * Отправка уведомления автору топика
             $this->Subscribe_Send(
                 'topic_new_comment', $oTopic->getId(), 'comment_new.tpl',
-                $this->Lang_Get('notify_subject_comment_new'),
+                E::Module('Lang')->Get('notify_subject_comment_new'),
                 array('oTopic' => $oTopic, 'oComment' => $oCommentNew, 'oUserComment' => $oGuestUser),
                 $aExcludeMail, 'gc'
             );
@@ -362,9 +363,10 @@ class PluginGc_ActionBlog extends PluginGc_Inherit_ActionBlog {
                 $oTopic->getPublish() && !$oTopic->getBlog()->IsPrivate()
             );
         } else {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            E::Module('Message')->AddErrorSingle(E::Module('Lang')->Get('system_error'), E::Module('Lang')->Get('error'));
         }
     }
+
 }
 
 // EOF

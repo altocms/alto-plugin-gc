@@ -7,23 +7,24 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
- * @version     0.0.1 от 06.09.2014 8:30
  */
-class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherit_ModuleComment_EntityComment {
+class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherits_ModuleComment_EntityComment {
+
     /**
      * Возвращает идентификатор записи
+     *
      * @return int|null
      */
     public function getGuestSocialLink() {
+
         if ($iTokenId = $this->getTokenId()) {
             /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
-            $oToken = $this->PluginGc_CommentProvider_GetUserTokenByTokenId($iTokenId);
+            $oToken = E::Module('PluginGc\CommentProvider')->GetUserTokenByTokenId($iTokenId);
 
             // Нет токена
             if (!$oToken) {
                 return '';
             }
-
 
             switch ($oToken->getTokenProviderName()) {
                 case 'vk':
@@ -58,10 +59,9 @@ class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherit_ModuleCommen
                     $sLink = FALSE;
             }
 
-
             if ($sLink) {
                 $sLink = str_replace('{*}', $oToken->getTokenProviderUserId(), $sLink);
-                $sLink = str_replace('{**}', $this->Lang_Get('plugin.gc.' . $oToken->getTokenProviderName()), $sLink);
+                $sLink = str_replace('{**}', E::Module('Lang')->Get('plugin.gc.' . $oToken->getTokenProviderName()), $sLink);
             }
 
             return $sLink;
@@ -73,6 +73,7 @@ class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherit_ModuleCommen
      * @return int|null
      */
     public function getSocialLink() {
+
         if (($sSocialType = $this->getCommentSocial()) && $this->getSocialId()) {
             switch ($sSocialType) {
                 case 'vk':
@@ -117,4 +118,7 @@ class PluginGc_ModuleComment_EntityComment extends PluginGc_Inherit_ModuleCommen
 
         return FALSE;
     }
+
 }
+
+// EOF

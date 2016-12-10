@@ -7,17 +7,18 @@
  * @author      Андрей Г. Воронов <andreyv@gladcode.ru>
  * @copyrights  Copyright © 2014, Андрей Г. Воронов
  *              Является частью плагина Gc
- * @version     0.0.1 от 03.09.2014 10:47
  */
 class PluginGc_HookGc extends Hook {
+
     /**
      * Регистрация хуков
      */
     public function RegisterHook() {
+
         // Устанавливает разрешение на гостевое комментирование топика
         if (!E::IsUser()) {
             /** @var string $sPluginMode Режим работы плагина */
-            $sPluginMode = Config::Get('plugin.gc.mode');
+            $sPluginMode = C::Get('plugin.gc.mode');
 
             // Комменты через социальные сети
             if (in_array($sPluginMode, array('social', 'both'))) {
@@ -34,9 +35,8 @@ class PluginGc_HookGc extends Hook {
 
 
         if (E::IsAdmin()) {
-            $this->AddHook('template_admin_menu_content', 'AdminMenuInject', __CLASS__);
+            $this->AddHook('template_admin_menu_settings', 'AdminMenuInject', __CLASS__);
         }
-
     }
 
     /**
@@ -46,8 +46,7 @@ class PluginGc_HookGc extends Hook {
      */
     public function AdminMenuInject() {
 
-        return $this->Viewer_Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.admin.menu.tpl');
-
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.admin.menu.tpl');
     }
 
 
@@ -56,21 +55,17 @@ class PluginGc_HookGc extends Hook {
      * @return string
      */
     private function GetSocialIcons() {
-        /** @var ModuleViewer $oLocalViewer */
-        $oLocalViewer = $this->Viewer_GetLocalViewer();
 
         $sMenu = '';
-        foreach (Config::Get('plugin.gc.providers') as $sProviderName => $aProviderData) {
+        foreach (C::Get('plugin.gc.providers') as $sProviderName => $aProviderData) {
             /** @var AuthProvider $oProvider */
-            $oProvider = $this->PluginGc_CommentProvider_GetProviderByName($sProviderName);
+            $oProvider = E::Module('PluginGc\CommentProvider')->GetProviderByName($sProviderName);
             if ($oProvider) {
-                $oLocalViewer->Assign('sAuthUrl', $oProvider->sAuthUrl);
-                $oLocalViewer->Assign('sProviderName', $sProviderName);
-                $sMenu .= $oLocalViewer->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.social.buttons.tpl');
+                E::Module('Viewer')->Assign('sAuthUrl', $oProvider->sAuthUrl);
+                E::Module('Viewer')->Assign('sProviderName', $sProviderName);
+                $sMenu .= E::Module('Viewer')->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.social.buttons.tpl');
             }
         }
-
-
         return $sMenu;
     }
 
@@ -81,32 +76,29 @@ class PluginGc_HookGc extends Hook {
      */
     public function TemplateAddSocialIcons() {
 
-        $this->Session_Set('return_path', Router::GetPathWebCurrent());
+        E::Module('Session')->Set('return_path', Router::GetPathWebCurrent());
 
         return
-            $this->Lang_Get('plugin.gc.auth_by_social' . ($this->PluginGc_CommentProvider_ValidateCommentRight() ? 'good' : '')) .
+            E::Module('Lang')->Get('plugin.gc.auth_by_social' . (E::Module('PluginGc\CommentProvider')->ValidateCommentRight() ? 'good' : '')) .
             '<ul class="settings-social">' . $this->GetSocialIcons() . '</ul>';
     }
 
+
     public function TemplateHookAddMailForm() {
 
-        /** @var ModuleViewer $oLocalViewer */
-        $oLocalViewer = $this->Viewer_GetLocalViewer();
-
-        if ($this->PluginGc_CommentProvider_ValidateCommentRight()) {
-            $oLocalViewer->Assign('right_comment', TRUE);
+        if (E::Module('PluginGc\CommentProvider')->ValidateCommentRight()) {
+            E::Module('Viewer')->Assign('right_comment', TRUE);
         }
 
-        return $oLocalViewer->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.guest-form.tpl');
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.guest-form.tpl');
     }
+
 
     public function TemplateHookAddSocial() {
 
-        /** @var ModuleViewer $oLocalViewer */
-        $oLocalViewer = $this->Viewer_GetLocalViewer();
-
-
-        return $oLocalViewer->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.social.tpl');
+        return E::Module('Viewer')->Fetch(Plugin::GetTemplatePath('gc') . '/tpls/injects/inject.social.tpl');
     }
 
 }
+
+// EOF

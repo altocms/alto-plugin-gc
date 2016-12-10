@@ -11,27 +11,17 @@
 
 class PluginGc_ActionGc extends Action {
 
-
-    /**
-     * Абстрактный метод инициализации экшена
-     *
-     */
     public function Init() {
         // TODO: Implement Init() method.
     }
 
-    /**
-     * Абстрактный метод регистрации евентов.
-     * В нём необходимо вызывать метод AddEvent($sEventName,$sEventFunction)
-     *
-     */
+
     protected function RegisterEvent() {
 
         // Перенаправим запросы всех провайдеров в один экшен
         foreach (Config::Get('plugin.gc.providers') as $sProviderName => $aProviderData) {
             $this->AddEvent($sProviderName, 'EventAuth');
         }
-
     }
 
 
@@ -47,12 +37,12 @@ class PluginGc_ActionGc extends Action {
         $sProviderName = Router::GetActionEvent();
 
         /** @var AuthProvider $oProvider Текущий провайдер */
-        if (!($sProviderName && $oProvider = $this->PluginGc_CommentProvider_GetProviderByName($sProviderName))) {
+        if (!($sProviderName && $oProvider = E::Module('PluginGc\CommentProvider')->GetProviderByName($sProviderName))) {
             return $this->_NotFound();
         }
 
         // Куда возвращаемся?
-        $sReturnPath = $this->Session_Get('return_path');
+        $sReturnPath = E::Module('Session')->Get('return_path');
 
         // Получим токен пользователя
         /** @var PluginGc_ModuleCommentProvider_EntityUserToken $oToken */
@@ -64,8 +54,6 @@ class PluginGc_ActionGc extends Action {
             return TRUE;
         }
 
-
-
         // Если пользователь есть, авторизуем его и уходим. Но здесь может быть два варианта:
         // Если ид. пользователя отдается с токеном, то второй запрос не формируем, для проверки
         // пользователя хватит и одного. Если же ид. не получили, например от одноклассников, то
@@ -73,7 +61,7 @@ class PluginGc_ActionGc extends Action {
         // после получения полных данных от социальной сети
 
         // Сначала ищем пользователя по токену
-        if ($oUserFindByToken = $this->PluginGc_CommentProvider_GetUserByTokenData($oToken)) {
+        if ($oUserFindByToken = E::Module('PluginGc\CommentProvider')->GetUserByTokenData($oToken)) {
             $this->_AuthUser($oUserFindByToken);
             Router::Location($this->_ReturnPath());
 
@@ -81,7 +69,7 @@ class PluginGc_ActionGc extends Action {
         }
 
         // Теперь по идентификатору пользователя, который может быть в токене
-        if ($oToken->getTokenProviderUserId() && $oUser = $this->PluginGc_CommentProvider_GetUserByToken($oToken)) {
+        if ($oToken->getTokenProviderUserId() && $oUser = E::Module('PluginGc\CommentProvider')->GetUserByToken($oToken)) {
             // Вот и всё
             $this->_AuthUser($oUser);
             Router::Location($this->_ReturnPath());
@@ -96,7 +84,7 @@ class PluginGc_ActionGc extends Action {
             if ($oUserData && !$oToken->getTokenProviderUserId()) {
                 $oToken->setTokenProviderUserId(str_replace($oUserData->getDataProviderName() . '_', '', $oUserData->getDataLogin()));
 
-                if ($oUser = $this->PluginGc_CommentProvider_GetUserByToken($oToken)) {
+                if ($oUser = E::Module('PluginGc\CommentProvider')->GetUserByToken($oToken)) {
                     $this->_AuthUser($oUser);
 
                     Router::Location($this->_ReturnPath());
@@ -108,37 +96,37 @@ class PluginGc_ActionGc extends Action {
             // Зафиксируем пользователя
             if ($oUserData && $oToken) {
 
-                $this->PluginGc_CommentProvider_SaveUserData($oUserData, $oToken);
+                E::Module('PluginGc\CommentProvider')->SaveUserData($oUserData, $oToken);
 
                 $this->_AuthUser($oToken);
             }
-
         }
 
         Router::Location($this->_ReturnPath());
 
         return TRUE;
-
     }
 
     private function _ReturnPath() {
-        $sReturnPath = $this->Session_Get('return_path');
+
+        $sReturnPath = E::Module('Session')->Get('return_path');
 
         return $sReturnPath ? $sReturnPath : '';
     }
 
 
     /**
-     * Возвращаемся назад и разрешаем пользователю комментировать
-     * топик.
+     * Возвращаемся назад и разрешаем пользователю комментировать топик.
+     *
      * @param PluginGc_ModuleCommentProvider_EntityUserToken $oToken
      */
     protected function _AuthUser($oToken) {
 
-        $this->Session_Set('comment_token_id', $oToken->getTokenId());
-        $this->Session_SetCookie('comment_token_hash', md5(Config::Get('plugin.gc.salt') . $oToken->getTokenData()), 'P7D', false);
-//        $this->Message_AddNoticeSingle($this->Lang_Get('plugin.gc.ok'), $this->Lang_Get('attention'), TRUE);
+        E::Module('Session')->Set('comment_token_id', $oToken->getTokenId());
+        E::Module('Session')->SetCookie('comment_token_hash', md5(Config::Get('plugin.gc.salt') . $oToken->getTokenData()), 'P7D', false);
+//        E::Module('Message')->AddNoticeSingle(E::Module('Lang')->Get('plugin.gc.ok'), E::Module('Lang')->Get('attention'), TRUE);
     }
 
-
 }
+
+// EOF
