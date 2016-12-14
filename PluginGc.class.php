@@ -108,8 +108,8 @@ class PluginGc extends Plugin {
     public function Init() {
 
         E::Module('Viewer')->Assign('sTemplatePathGc', Plugin::GetTemplateDir(__CLASS__));
-        E::Module('Viewer')->AppendStyle(Plugin::GetTemplateDir(__CLASS__) . 'assets/css/style.css'); // Добавление своего CSS
-        E::Module('Viewer')->AppendScript(Plugin::GetTemplateDir(__CLASS__) . 'assets/js/script.js'); // Добавление своего JS
+        E::Module('Viewer')->AppendStyle(Plugin::GetTemplateDir(__CLASS__) . 'assets/css/plugin.gc.css'); // Добавление своего CSS
+        E::Module('Viewer')->AppendScript(Plugin::GetTemplateDir(__CLASS__) . 'assets/js/plugin.gc.js'); // Добавление своего JS
 
         return TRUE;
     }
