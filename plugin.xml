@@ -9,7 +9,7 @@
         <lang name="default">andreyv</lang>
     </author>
     <homepage>http://gladcode.ru</homepage>
-    <version>1.1.8</version>
+    <version>1.1.9</version>
     <dirname>gc</dirname>
     <requires>
         <alto>
