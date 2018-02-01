@@ -1,19 +1,17 @@
 -- ----------------------------------------------------------------------------------------------
--- install.sql
+-- init.sql
 -- Файл таблиц баз данных плагина Gc
 --
 -- @author      Андрей Г. Воронов <andreyv@gladcode.ru>
 -- @copyrights  Copyright © 2014, Андрей Г. Воронов
 --              Является частью плагина Gc
--- @version     0.0.1 от 03.09.2014 10:02
 -- ----------------------------------------------------------------------------------------------
 
 INSERT INTO
   `prefix_user`
   (user_id, user_login, user_password, user_activate, user_mail, user_date_register, user_ip_register)
 VALUES
-  (0, '0B8uAORUAmrIObE9QZ1U5QW8xakE', '0B8uAORUAmrIObE9QZ1U5QW8xakE', 0, 'test@gladcode.ru', '2014-01-01 00:01',
-   '127.0.0.1');
+  (0, '@guest', '0x1234567890', 0, 'test@gladcode.ru', NOW(), '127.0.0.1');
 
 ALTER TABLE
 `prefix_comment`

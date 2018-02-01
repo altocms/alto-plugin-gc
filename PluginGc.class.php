@@ -83,11 +83,11 @@ class PluginGc extends Plugin {
     public function Activate() {
 
         if (!$this->isFieldExists('prefix_comment', 'comment_guest_login')) {
-            $this->ExportSQL(dirname(__FILE__) . '/install/db/install.sql');
+            $this->ExportSQL(__DIR__ . '/install/db/init.sql');
         }
 
         if (!$this->isFieldExists('prefix_comment', 'comment_image')) {
-            $this->ExportSQL(dirname(__FILE__) . '/install/db/update-to-1.1.sql');
+            $this->ExportSQL(__DIR__ . '/install/db/update-to-1.1.sql');
         }
 
         return TRUE;

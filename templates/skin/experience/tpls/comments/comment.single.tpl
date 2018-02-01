@@ -60,6 +60,9 @@
                                 {else}
                                     <span class="userlogo">{$oComment->getGuestLogin()}</span>
                                 {/if}
+                                {if E::isAdminOrModerator() AND $oComment->getCommentGuestMail()}
+                                    <span class="text-muted">({$oComment->getCommentGuestMail()})</span>
+                                {/if}
                             {/if}
                         </li>
                         <li class="comment-date-block">
